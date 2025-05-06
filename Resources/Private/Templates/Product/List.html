@@ -1,0 +1,13 @@
+<f:layout name="Default" />
+<f:section name="main">
+    <h1>Shopware Produkte</h1>
+    <ul>
+        <f:for each="{products}" as="product">
+            <li>
+                <f:link.action action="show" arguments="{product: product}">
+                    {product.name} – {product.price -> f:format.number(decimals:2)} €
+                </f:link.action>
+            </li>
+        </f:for>
+    </ul>
+</f:section> 

@@ -1,0 +1,8 @@
+<f:layout name="Default" />
+<f:section name="main">
+    <h1>{product.name}</h1>
+    <p>{product.description}</p>
+    <p>Preis: {product.price -> f:format.number(decimals:2)} €</p>
+    <p>Status: <f:if condition="{product.isActive}">Aktiv<f:else>Nicht aktiv</f:else></f:if></p>
+    <f:link.action action="list">Zurück zur Übersicht</f:link.action>
+</f:section> 

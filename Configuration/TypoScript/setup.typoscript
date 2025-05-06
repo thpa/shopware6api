@@ -1,0 +1,7 @@
+plugin.tx_shopware6api_productlist {
+    view {
+        templateRootPaths.0 = EXT:shopware6api/Resources/Private/Templates/
+        partialRootPaths.0 = EXT:shopware6api/Resources/Private/Partials/
+        layoutRootPaths.0 = EXT:shopware6api/Resources/Private/Layouts/
+    }
+} 
