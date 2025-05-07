@@ -38,9 +38,9 @@ class ProductImportService
                 $product->setName($item['translated']['name'] ?? '');
                 $product->setDescription($item['translated']['description'] ?? '');
                 $product->setPrice((float)($item['price'][0]['gross'] ?? 0));
-                $product->setIsActive((bool)($item['active'] ?? true));
+                $product->setIsActive((bool)($item['active'] ?? false));
 
-                // Import images
+                // Import all images
                 if (!empty($item['media'])) {
                     $images = new ObjectStorage();
                     foreach ($item['media'] as $media) {

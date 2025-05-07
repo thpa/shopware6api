@@ -3,34 +3,24 @@ namespace ThomasPaul\Shopware6Api\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 
 class Product extends AbstractEntity
 {
-    protected int $uid = 0;
     protected string $shopwareId = '';
     protected string $name = '';
     protected string $description = '';
     protected float $price = 0.0;
-    protected bool $isActive = true;
+    protected bool $isActive = false;
     
     /**
-     * @var ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+     * @var ObjectStorage<FileReference>
      */
     protected ObjectStorage $images;
 
     public function __construct()
     {
         $this->images = new ObjectStorage();
-    }
-
-    public function getUid(): int
-    {
-        return $this->uid;
-    }
-
-    public function setUid(int $uid): void
-    {
-        $this->uid = $uid;
     }
 
     public function getShopwareId(): string
@@ -73,16 +63,6 @@ class Product extends AbstractEntity
         $this->price = $price;
     }
 
-    public function getIsActive(): bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): void
-    {
-        $this->isActive = $isActive;
-    }
-
     public function getImages(): ObjectStorage
     {
         return $this->images;
@@ -93,13 +73,23 @@ class Product extends AbstractEntity
         $this->images = $images;
     }
 
-    public function addImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image): void
+    public function addImage(FileReference $image): void
     {
         $this->images->attach($image);
     }
 
-    public function removeImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image): void
+    public function removeImage(FileReference $image): void
     {
         $this->images->detach($image);
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
     }
 }

@@ -62,13 +62,13 @@ return [
       'label' => 'Is Active',
       'config' => [
         'type' => 'check',
-        'default' => 1,
+        'default' => 0,
       ],
     ]
   ],
   'types' => [
     '1' => [
-      'showitem' => 'name, description, price, is_active, images, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden',
+      'showitem' => 'name, description, price, images, is_active, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden',
     ],
   ]
 ];
