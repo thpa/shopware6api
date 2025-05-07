@@ -1,6 +1,17 @@
 <?php
 defined('TYPO3') or die();
 
-use ThomasPaul\Shopware6Api\Command\ProductImportCommand;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+use ThomasPaul\Shopware6Api\Controller\ProductController;
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = ProductImportCommand::class;
+// Plugin-Registrierung
+ExtensionUtility::configurePlugin(
+    'Shopware6api',
+    'Productlist',
+    [
+        ProductController::class => 'list,show',
+    ],
+    [
+        ProductController::class => 'list,show',
+    ]
+);

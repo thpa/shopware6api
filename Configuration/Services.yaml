@@ -2,5 +2,14 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+    public: true
+
   ThomasPaul\Shopware6Api\:
     resource: '../Classes/*'
+    exclude: '../Classes/Domain/Model/*'
+
+  ThomasPaul\Shopware6Api\Command\ProductImportCommand:
+    tags:
+      - name: 'console.command'
+        command: 'shopware6api:import'
+        description: 'Importiert Produkte aus der Shopware 6 API.'

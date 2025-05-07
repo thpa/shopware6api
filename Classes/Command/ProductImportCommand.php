@@ -9,30 +9,28 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ProductImportCommand extends Command
 {
-    protected static $defaultName = 'shopware6api:import';
-
     public function __construct(
         protected ProductImportService $importService
     ) {
-        parent::__construct();
+        parent::__construct('shopware6api:import');
     }
 
     protected function configure(): void
     {
-        $this->setDescription('Import products from Shopware 6');
+        $this->setDescription('Importiert Produkte aus der Shopware 6 API.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $output->writeln('Starting product import...');
+            $output->writeln('Starte Import der Produkte...');
             
             $this->importService->import();
             
-            $output->writeln('<info>Import completed successfully!</info>');
+            $output->writeln('<info>Produkte wurden erfolgreich importiert.</info>');
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $output->writeln('<error>Import failed: ' . $e->getMessage() . '</error>');
+            $output->writeln('<error>Fehler beim Import: ' . $e->getMessage() . '</error>');
             return Command::FAILURE;
         }
     }
