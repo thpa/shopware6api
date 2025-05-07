@@ -1,2 +1,5 @@
 # cat=basic; type=string; label=Shopware API URL: The base URL of your Shopware 6 instance (e.g. https://your-shop.com)
 apiBaseUrl = 
+
+# cat=basic; type=string; label=Shopware Access Key: The access key for the Shopware 6 API
+accessKey = 

@@ -8,16 +8,24 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 class ShopwareApiService
 {
     protected string $apiBaseUrl;
+    protected string $accessKey;
 
     public function __construct()
     {
         $this->apiBaseUrl = $this->resolveBaseUrl();
+        $this->accessKey = $this->resolveAccessKey();
     }
 
     protected function resolveBaseUrl(): string
     {
         $extensionConfig = GeneralUtility::makeInstance(ExtensionConfiguration::class);
         return rtrim($extensionConfig->get('shopware6api')['apiBaseUrl'] ?? '', '/') . '/store-api/';
+    }
+
+    protected function resolveAccessKey(): string
+    {
+        $extensionConfig = GeneralUtility::makeInstance(ExtensionConfiguration::class);
+        return $extensionConfig->get('shopware6api')['accessKey'] ?? '';
     }
 
     /**
@@ -35,6 +43,7 @@ class ShopwareApiService
             [
                 'headers' => [
                     'Accept' => 'application/json',
+                    'sw-access-key' => $this->accessKey
                 ]
             ]
         );
