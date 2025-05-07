@@ -11,5 +11,17 @@ $EMCONF[$_EXTKEY] = [
     'depends' => [
       'typo3' => '13.0.0-13.9.99'
     ]
-  ]
+  ],
+  'autoload' => [
+    'psr-4' => [
+      'ThomasPaul\\Shopware6Api\\' => 'Classes/'
+    ]
+  ],
+  'autoload-dev' => [
+    'psr-4' => [
+      'ThomasPaul\\Shopware6Api\\Tests\\' => 'Tests/'
+    ]
+  ],
+  'conflicts' => [],
+  'suggests' => [],
 ];
