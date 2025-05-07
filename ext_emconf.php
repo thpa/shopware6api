@@ -1,3 +1,4 @@
+<?php
 $EMCONF[$_EXTKEY] = [
   'title' => 'Shopware6Api',
   'description' => 'Zeigt Produkte aus Shopware 6 in TYPO3 an und speichert sie lokal.',

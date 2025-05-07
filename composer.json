@@ -1,20 +1,19 @@
 {
-    "name": "thomaspaul/shopware6api",
-    "description": "TYPO3 Extension zum Import und Anzeige von Shopware 6 Produkten",
-    "type": "typo3-cms-extension",
-    "license": "MIT",
-    "require": {
-      "typo3/cms-core": "^13.0",
-      "guzzlehttp/guzzle": "^7.0"
-    },
-    "autoload": {
-      "psr-4": {
-        "ThomasPaul\\Shopware6Api\\": "Classes/"
-      }
-    },
-    "extra": {
-      "typo3/cms": {
-        "extension-key": "shopware6api"
-      }
+  "name": "thomaspaul/shopware6api",
+  "description": "TYPO3 Extension zum Import und Anzeige von Shopware 6 Produkten",
+  "type": "typo3-cms-extension",
+  "license": "MIT",
+  "require": {
+    "typo3/cms-core": "^13.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "ThomasPaul\\Shopware6Api\\": "Classes/"
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "shopware6api"
     }
   }
+}
