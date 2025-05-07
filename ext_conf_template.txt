@@ -1,0 +1,2 @@
+# cat=basic; type=string; label=Shopware API URL: The base URL of your Shopware 6 instance (e.g. https://your-shop.com)
+apiBaseUrl = 
