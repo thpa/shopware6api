@@ -2,7 +2,7 @@
   "name": "thomaspaul/shopware6api",
   "description": "TYPO3 Extension zum Import und Anzeige von Shopware 6 Produkten",
   "type": "typo3-cms-extension",
-  "license": "MIT",
+  "license": "GPL-2.0-or-later",
   "require": {
     "typo3/cms-core": "^13.0"
   },
