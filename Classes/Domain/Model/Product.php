@@ -1,7 +1,10 @@
 <?php
 namespace ThomasPaul\Shopware6Api\Domain\Model;
 
-class Product
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+
+class Product extends AbstractEntity
 {
     protected int $uid = 0;
     protected string $shopwareId = '';
@@ -9,6 +12,16 @@ class Product
     protected string $description = '';
     protected float $price = 0.0;
     protected bool $isActive = true;
+    
+    /**
+     * @var ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+     */
+    protected ObjectStorage $images;
+
+    public function __construct()
+    {
+        $this->images = new ObjectStorage();
+    }
 
     public function getUid(): int
     {
@@ -68,5 +81,25 @@ class Product
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getImages(): ObjectStorage
+    {
+        return $this->images;
+    }
+
+    public function setImages(ObjectStorage $images): void
+    {
+        $this->images = $images;
+    }
+
+    public function addImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image): void
+    {
+        $this->images->attach($image);
+    }
+
+    public function removeImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image): void
+    {
+        $this->images->detach($image);
     }
 }

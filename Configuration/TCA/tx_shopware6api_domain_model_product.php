@@ -9,6 +9,9 @@ return [
     'delete' => 'deleted',
     'searchFields' => 'name,description,shopware_id',
     'iconfile' => 'EXT:shopware6api/Resources/Public/Icons/product.svg',
+    'enablecolumns' => [
+      'disabled' => 'hidden',
+    ],
   ],
   'columns' => [
     'shopware_id' => [
@@ -18,38 +21,54 @@ return [
     ],
     'name' => [
       'label' => 'Name',
-      'config' => ['type' => 'input']
+      'config' => [
+        'type' => 'input',
+        'required' => true,
+      ],
     ],
     'description' => [
-      'label' => 'Beschreibung',
-      'config' => ['type' => 'text']
+      'label' => 'Description',
+      'config' => [
+        'type' => 'text',
+      ],
     ],
     'price' => [
-      'label' => 'Preis',
-      'config' => ['type' => 'input', 'eval' => 'double2']
+      'label' => 'Price',
+      'config' => [
+        'type' => 'input',
+        'eval' => 'double2',
+      ],
     ],
-    'image' => [
-      'label' => 'Bild',
+    'images' => [
+      'label' => 'Images',
       'config' => [
         'type' => 'inline',
         'foreign_table' => 'sys_file_reference',
         'foreign_field' => 'uid_foreign',
+        'foreign_sortby' => 'sorting_foreign',
         'foreign_table_field' => 'tablenames',
         'foreign_match_fields' => [
-          'fieldname' => 'image'
+          'fieldname' => 'images',
+          'tablenames' => 'tx_shopware6api_domain_model_product',
         ],
         'appearance' => [
-          'createNewRelationLinkTitle' => 'Bild hinzufügen'
+          'collapseAll' => true,
+          'expandSingle' => true,
         ],
-        'maxitems' => 1
-      ]
+        'maxitems' => 9999,
+      ],
     ],
     'is_active' => [
-      'label' => 'Aktiv?',
-      'config' => ['type' => 'check']
+      'label' => 'Is Active',
+      'config' => [
+        'type' => 'check',
+        'default' => 1,
+      ],
     ]
   ],
   'types' => [
-    '0' => ['showitem' => 'shopware_id, name, price, image, description, is_active']
+    '1' => [
+      'showitem' => 'name, description, price, is_active, images, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden',
+    ],
   ]
 ];
