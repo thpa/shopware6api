@@ -17,7 +17,8 @@ return [
     'shopware_id' => [
       'exclude' => 1,
       'label' => 'Shopware ID',
-      'config' => ['type' => 'input', 'readOnly' => true]
+      'config' => ['type' => 'input',
+      'readOnly' => true]
     ],
     'name' => [
       'label' => 'Name',
@@ -68,7 +69,7 @@ return [
   ],
   'types' => [
     '1' => [
-      'showitem' => 'name, description, price, images, is_active, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden',
+      'showitem' => 'name, description, price, images, shopware_id,is_active, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden',
     ],
   ]
 ];

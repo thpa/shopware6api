@@ -5,3 +5,5 @@ plugin.tx_shopware6api_productlist {
         layoutRootPaths.0 = EXT:shopware6api/Resources/Private/Layouts/
     }
 } 
+
+plugin.tx_shopware6api.settings.storagePid = 0
