@@ -1,12 +1,12 @@
 <?php
 $EMCONF[$_EXTKEY] = [
   'title' => 'Shopware6Api',
-  'description' => 'Zeigt Produkte aus Shopware 6 in TYPO3 an und speichert sie lokal.',
+  'description' => 'TYPO3 extension to import and display products from the Shopware 6 Store API',
   'category' => 'plugin',
   'state' => 'beta',
   'author' => 'Thomas Paul',
-  'author_email' => 'thomas@example.com',
-  'version' => '1.0.0',
+  'author_email' => 'mail@thomaspaul.at',
+  'version' => '0.0.1',
   'constraints' => [
     'depends' => [
       'typo3' => '13.0.0-13.9.99'
