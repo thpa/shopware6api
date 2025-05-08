@@ -17,7 +17,7 @@ use TYPO3\CMS\Core\Http\UploadedFile;
 class ProductImportService
 {
     protected const IMPORT_FOLDER = 'imported/';
-    protected const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    protected const ALLOWED_IMAGE_TYPES = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
     public function __construct(
         protected ShopwareApiService $apiService,
@@ -37,7 +37,7 @@ class ProductImportService
                 $product->setShopwareId($item['id']);
                 $product->setName($item['translated']['name'] ?? '');
                 $product->setDescription($item['translated']['description'] ?? '');
-                $product->setPrice((float)($item['price'][0]['gross'] ?? 0));
+                $product->setPrice((float)($item['calculatedPrice']['unitPrice'] ?? 0));
                 $product->setIsActive((bool)($item['active'] ?? false));
 
                 // Import all images
