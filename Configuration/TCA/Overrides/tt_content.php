@@ -9,6 +9,6 @@ call_user_func(function () {
 
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignature,
-        'FILE:EXT:shopware6api/Configuration/FlexForms/ProductList.xml'
+        'FILE:EXT:shopware6api/Configuration/FlexForms/Productlist.xml'
     );
 });

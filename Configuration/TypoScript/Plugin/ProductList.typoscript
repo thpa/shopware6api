@@ -1,0 +1,28 @@
+plugin.tx_shopware6api_productlist {
+    view {
+        templateRootPaths {
+            0 = EXT:shopware6api/Resources/Private/Templates/
+            1 = {$plugin.tx_shopware6api_productlist.view.templateRootPaths.1}
+        }
+        partialRootPaths {
+            0 = EXT:shopware6api/Resources/Private/Partials/
+            1 = {$plugin.tx_shopware6api_productlist.view.partialRootPaths.1}
+        }
+        layoutRootPaths {
+            0 = EXT:shopware6api/Resources/Private/Layouts/
+            1 = {$plugin.tx_shopware6api_productlist.view.layoutRootPaths.1}
+        }
+    }
+    settings {
+        storagePid = {$plugin.tx_shopware6api_productlist.settings.storagePid}
+        header = {$plugin.tx_shopware6api_productlist.settings.header}
+        description = {$plugin.tx_shopware6api_productlist.settings.description}
+        showDescription = {$plugin.tx_shopware6api_productlist.settings.showDescription}
+        limit = {$plugin.tx_shopware6api_productlist.settings.limit}
+        orderBy = {$plugin.tx_shopware6api_productlist.settings.orderBy}
+        orderDirection = {$plugin.tx_shopware6api_productlist.settings.orderDirection}
+        detailButtonText = {$plugin.tx_shopware6api_productlist.settings.detailButtonText}
+    }
+}
+
+tt_content.list.20.shopware6api_productlist =< plugin.tx_shopware6api_productlist 

@@ -2,7 +2,7 @@
 defined('TYPO3') or die();
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-    'Shopware6api',
+    'Shopware6Api',
     'Productlist',
     'Shopware Produkte'
 ); 
