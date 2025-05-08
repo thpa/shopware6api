@@ -28,6 +28,7 @@ class ProductImportService
     public function import(): void
     {
         $products = $this->apiService->fetchProducts();
+        $storagePid = (int)($this->settings['storagePid'] ?? 0);
 
         foreach ($products as $item) {
             $existing = $this->productRepository->findOneByShopwareId($item['id']);
@@ -40,19 +41,13 @@ class ProductImportService
                 $product->setPrice((float)($item['calculatedPrice']['unitPrice'] ?? 0));
                 $product->setIsActive((bool)($item['active'] ?? false));
 
-                // Import cover image
+                // ✅ Cover-Bild laden und setzen
                 if (!empty($item['cover']['media']['url'])) {
                     $coverUrl = $item['cover']['media']['url'];
-                    $coverName = $item['cover']['media']['fileName'] ?? ($item['translated']['name'] ?? '');
 
-                    $coverReference = $this->createFileReferenceFromUrl(
-                        $coverUrl,
-                        $item['translated']['name'] ?? '',
-                        $coverName
-                    );
-
-                    if ($coverReference) {
-                        $product->setCoverImage($coverReference);// Voraussetzung: Es gibt $image im Model
+                    $coverImage = $this->createFileReferenceFromUrl($coverUrl, $storagePid);
+                    if ($coverImage) {
+                        $product->setCoverImage($coverImage);
                     }
                 }
 
@@ -61,11 +56,7 @@ class ProductImportService
                     $images = new ObjectStorage();
                     foreach ($item['media'] as $media) {
                         if (!empty($media['media']['url'])) {
-                            $fileReference = $this->createFileReferenceFromUrl(
-                                $media['media']['url'],
-                                $item['translated']['name'] ?? '',
-                                $media['media']['name'] ?? ''
-                            );
+                            $fileReference = $$this->createFileReferenceFromUrl($url, $name, $mediaName, 'images');
                             if ($fileReference) {
                                 $images->attach($fileReference);
                             }
@@ -83,62 +74,30 @@ class ProductImportService
         $this->persistenceManager->persistAll();
     }
 
-    protected function createFileReferenceFromUrl(string $url, string $productName, string $mediaName): ?\TYPO3\CMS\Extbase\Domain\Model\FileReference
+    protected function createFileReferenceFromUrl(string $url, int $pid): ?FileReference
     {
         try {
-            if (!filter_var($url, FILTER_VALIDATE_URL)) {
-                throw new \InvalidArgumentException('Invalid URL provided');
-            }
-
-            $tempPath = GeneralUtility::getFileAbsFileName('typo3temp/' . uniqid('shopware_', true) . '_' . basename($url));
-            $imageContent = @file_get_contents($url);
-            if (!$imageContent) {
-                throw new \RuntimeException('Could not download image from URL');
-            }
-            file_put_contents($tempPath, $imageContent);
-
-            $mimeType = mime_content_type($tempPath);
-            if (!in_array($mimeType, self::ALLOWED_IMAGE_TYPES, true)) {
-                throw new \RuntimeException('Invalid image type: ' . $mimeType);
-            }
+            $fileName = basename(parse_url($url, PHP_URL_PATH));
+            $tempPath = GeneralUtility::getFileAbsFileName('typo3temp/' . uniqid() . '_' . $fileName);
+            file_put_contents($tempPath, file_get_contents($url));
 
             $storage = GeneralUtility::makeInstance(StorageRepository::class)->findByUid(1);
-            $folder = $storage->getFolder(self::IMPORT_FOLDER);
-            if (!$storage->hasFolder(self::IMPORT_FOLDER)) {
-                $folder = $storage->createFolder(self::IMPORT_FOLDER);
-            }
+            $folder = $storage->hasFolder('imported') ? $storage->getFolder('imported') : $storage->createFolder('imported');
 
-            $fileName = $this->sanitizeFileName(basename(parse_url($url, PHP_URL_PATH)));
-            if (!$storage->hasFile($fileName, $folder)) {
-                $file = $storage->addFile($tempPath, $folder, $fileName);
-            } else {
-                $file = $storage->getFile($folder->getIdentifier() . $fileName);
-            }
+            $safeName = uniqid() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
+            $file = $storage->addFile($tempPath, $folder, $safeName);
 
-            // ⬇️ Der moderne Weg: direkt FileReference erzeugen
-            $fileReference = $file->getReference();
+            $ref = GeneralUtility::makeInstance(FileReference::class);
+            $ref->setFile($file);
+            $ref->setPid($pid);
 
-            if ($fileReference instanceof \TYPO3\CMS\Core\Resource\FileReference) {
-                $extbaseFileReference = GeneralUtility::makeInstance(FileReference::class);
-                $extbaseFileReference->setOriginalResource($fileReference);
+            // Diese 3 Zeilen sind entscheidend:
+            $ref->_setProperty('uidLocal', $file->getUid());
+            $ref->_setProperty('tablenames', 'tx_shopware6api_domain_model_product');
+            $ref->_setProperty('fieldname', 'cover_image');
 
-                $extbaseFileReference->setTitle($mediaName ?: $productName);
-                $extbaseFileReference->setAlternative($mediaName ?: $productName);
-                $extbaseFileReference->setDescription('Imported from Shopware');
-
-                return $extbaseFileReference;
-            }
-
-            return null;
+            return $ref;
         } catch (\Throwable $e) {
-            $logger = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)
-                ->getLogger(__CLASS__);
-
-            $logger->error('Error importing image: ' . $e->getMessage(), [
-                'url' => $url,
-                'product' => $productName,
-                'exception' => $e
-            ]);
             return null;
         } finally {
             if (isset($tempPath) && file_exists($tempPath)) {

@@ -12,11 +12,17 @@ class Product extends AbstractEntity
     protected string $description = '';
     protected float $price = 0.0;
     protected bool $isActive = false;
-    protected ?FileReference $coverImage = null;
     
     /**
-     * @var ObjectStorage<FileReference>
+     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference|null
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
      */
+    protected $coverImage;
+    
+    /**
+    * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+    * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
+    */
     protected ObjectStorage $images;
 
     public function __construct()

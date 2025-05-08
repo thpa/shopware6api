@@ -44,10 +44,20 @@ return [
       'exclude' => true,
       'label' => 'Cover Image',
       'config' => [
-          'type' => 'file',
-          'allowed' => 'jpg,jpeg,png,webp',
-          'maxitems' => 1
-      ]
+          'type' => 'inline',
+          'foreign_table' => 'sys_file_reference',
+          'foreign_field' => 'uid_foreign',
+          'foreign_sortby' => 'sorting_foreign',
+          'foreign_table_field' => 'tablenames',
+          'foreign_match_fields' => [
+              'fieldname' => 'cover_image',
+          ],
+          'appearance' => [
+              'createNewRelationLinkTitle' => 'Add Cover Image'
+          ],
+          'minitems' => 0,
+          'maxitems' => 1,
+      ],
     ],
     'images' => [
       'label' => 'Images',
@@ -62,6 +72,7 @@ return [
           'tablenames' => 'tx_shopware6api_domain_model_product',
         ],
         'appearance' => [
+          'createNewRelationLinkTitle' => 'Add Product Images',
           'collapseAll' => true,
           'expandSingle' => true,
         ],
