@@ -40,6 +40,15 @@ return [
         'eval' => 'double2',
       ],
     ],
+    'cover_image' => [
+      'exclude' => true,
+      'label' => 'Cover Image',
+      'config' => [
+          'type' => 'file',
+          'allowed' => 'jpg,jpeg,png,webp',
+          'maxitems' => 1
+      ]
+    ],
     'images' => [
       'label' => 'Images',
       'config' => [
@@ -69,7 +78,7 @@ return [
   ],
   'types' => [
     '1' => [
-      'showitem' => 'name, description, price, images, shopware_id,is_active, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden',
+      'showitem' => 'name, description, price, cover_image, images, shopware_id, is_active, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden',
     ],
   ]
 ];

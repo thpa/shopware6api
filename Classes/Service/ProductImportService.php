@@ -40,6 +40,22 @@ class ProductImportService
                 $product->setPrice((float)($item['calculatedPrice']['unitPrice'] ?? 0));
                 $product->setIsActive((bool)($item['active'] ?? false));
 
+                // Import cover image
+                if (!empty($item['cover']['media']['url'])) {
+                    $coverUrl = $item['cover']['media']['url'];
+                    $coverName = $item['cover']['media']['fileName'] ?? ($item['translated']['name'] ?? '');
+
+                    $coverReference = $this->createFileReferenceFromUrl(
+                        $coverUrl,
+                        $item['translated']['name'] ?? '',
+                        $coverName
+                    );
+
+                    if ($coverReference) {
+                        $product->setCoverImage($coverReference);// Voraussetzung: Es gibt $image im Model
+                    }
+                }
+
                 // Import all images
                 if (!empty($item['media'])) {
                     $images = new ObjectStorage();
@@ -67,74 +83,62 @@ class ProductImportService
         $this->persistenceManager->persistAll();
     }
 
-    protected function createFileReferenceFromUrl(string $url, string $productName, string $mediaName): ?FileReference
+    protected function createFileReferenceFromUrl(string $url, string $productName, string $mediaName): ?\TYPO3\CMS\Extbase\Domain\Model\FileReference
     {
         try {
-            // Validate URL
             if (!filter_var($url, FILTER_VALIDATE_URL)) {
                 throw new \InvalidArgumentException('Invalid URL provided');
             }
 
-            // Create temp file
-            $tempPath = GeneralUtility::getFileAbsFileName('typo3temp/' . uniqid('shopware_import_') . '_' . basename($url));
-            
-            // Download file
+            $tempPath = GeneralUtility::getFileAbsFileName('typo3temp/' . uniqid('shopware_', true) . '_' . basename($url));
             $imageContent = @file_get_contents($url);
             if (!$imageContent) {
                 throw new \RuntimeException('Could not download image from URL');
             }
             file_put_contents($tempPath, $imageContent);
 
-            // Get mime type
             $mimeType = mime_content_type($tempPath);
-            if (!in_array($mimeType, self::ALLOWED_IMAGE_TYPES)) {
+            if (!in_array($mimeType, self::ALLOWED_IMAGE_TYPES, true)) {
                 throw new \RuntimeException('Invalid image type: ' . $mimeType);
             }
 
-            // Get storage and ensure import folder exists
             $storage = GeneralUtility::makeInstance(StorageRepository::class)->findByUid(1);
+            $folder = $storage->getFolder(self::IMPORT_FOLDER);
             if (!$storage->hasFolder(self::IMPORT_FOLDER)) {
-                $storage->createFolder(self::IMPORT_FOLDER);
+                $folder = $storage->createFolder(self::IMPORT_FOLDER);
             }
 
-            // Import file
-            $fileImporter = GeneralUtility::makeInstance(FileImporter::class);
-            $uploadedFile = new UploadedFile(
-                $tempPath,
-                $mimeType,
-                UPLOAD_ERR_OK,
-                $this->sanitizeFileName(basename($url)),
-                true
-            );
-            
-            $file = $fileImporter->import($uploadedFile, self::IMPORT_FOLDER, 'autoRename', $storage);
-            
-            if (!$file instanceof FileInterface) {
-                throw new \RuntimeException('File import failed');
+            $fileName = $this->sanitizeFileName(basename(parse_url($url, PHP_URL_PATH)));
+            if (!$storage->hasFile($fileName, $folder)) {
+                $file = $storage->addFile($tempPath, $folder, $fileName);
+            } else {
+                $file = $storage->getFile($folder->getIdentifier() . $fileName);
             }
 
-            // Create file reference
-            $fileReference = GeneralUtility::makeInstance(FileReference::class);
-            $fileReference->setOriginalResource($file);
-            
-            // Set metadata
-            $fileReference->setTitle($mediaName ?: $productName);
-            $fileReference->setDescription('Imported from Shopware for product: ' . $productName);
-            $fileReference->setAlternative($mediaName ?: $productName);
+            // ⬇️ Der moderne Weg: direkt FileReference erzeugen
+            $fileReference = $file->getReference();
 
-            return $fileReference;
-        } catch (\Exception $e) {
-            // Log error
-            GeneralUtility::devLog(
-                'Error importing image: ' . $e->getMessage(),
-                'shopware6api',
-                3,
-                [
-                    'url' => $url,
-                    'product' => $productName,
-                    'error' => $e->getMessage()
-                ]
-            );
+            if ($fileReference instanceof \TYPO3\CMS\Core\Resource\FileReference) {
+                $extbaseFileReference = GeneralUtility::makeInstance(FileReference::class);
+                $extbaseFileReference->setOriginalResource($fileReference);
+
+                $extbaseFileReference->setTitle($mediaName ?: $productName);
+                $extbaseFileReference->setAlternative($mediaName ?: $productName);
+                $extbaseFileReference->setDescription('Imported from Shopware');
+
+                return $extbaseFileReference;
+            }
+
+            return null;
+        } catch (\Throwable $e) {
+            $logger = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)
+                ->getLogger(__CLASS__);
+
+            $logger->error('Error importing image: ' . $e->getMessage(), [
+                'url' => $url,
+                'product' => $productName,
+                'exception' => $e
+            ]);
             return null;
         } finally {
             if (isset($tempPath) && file_exists($tempPath)) {

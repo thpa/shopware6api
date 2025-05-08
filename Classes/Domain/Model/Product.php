@@ -12,6 +12,7 @@ class Product extends AbstractEntity
     protected string $description = '';
     protected float $price = 0.0;
     protected bool $isActive = false;
+    protected ?FileReference $coverImage = null;
     
     /**
      * @var ObjectStorage<FileReference>
@@ -92,4 +93,15 @@ class Product extends AbstractEntity
     {
         $this->isActive = $isActive;
     }
+
+    public function getCoverImage(): ?FileReference
+    {
+        return $this->coverImage;
+    }
+
+    public function setCoverImage(?FileReference $coverImage): void
+    {
+        $this->coverImage = $coverImage;
+    }
+
 }
