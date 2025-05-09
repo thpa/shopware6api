@@ -13,11 +13,16 @@ class Product extends AbstractEntity
     protected float $price = 0.0;
     protected bool $isActive = false;
     
-    /**
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference|null
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     */
-    protected $coverImage;
+    #[FileUpload([
+        'validation' => [
+            'required' => false,
+            'maxFiles' => 1,
+            'fileSize' => ['minimum' => '0K', 'maximum' => '5M'],
+            'allowedMimeTypes' => ['image/jpeg', 'image/png', 'image/webp']
+        ],
+        'uploadFolder' => '1:/user_upload/shopware_images/'
+    ])]
+    protected ?FileReference $coverImage = null;
     
     /**
     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>

@@ -82,21 +82,21 @@ class ProductImportService
             file_put_contents($tempPath, file_get_contents($url));
 
             $storage = GeneralUtility::makeInstance(StorageRepository::class)->findByUid(1);
-            $folder = $storage->hasFolder('imported') ? $storage->getFolder('imported') : $storage->createFolder('imported');
+            $folder = $storage->hasFolder(self::IMPORT_FOLDER)
+                ? $storage->getFolder(self::IMPORT_FOLDER)
+                : $storage->createFolder(self::IMPORT_FOLDER);
 
             $safeName = uniqid() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $fileName);
-            $file = $storage->addFile($tempPath, $folder, $safeName);
+            $file = $storage->hasFile($safeName, $folder)
+                ? $storage->getFile($folder->getIdentifier() . $safeName)
+                : $storage->addFile($tempPath, $folder, $safeName);
 
             $ref = GeneralUtility::makeInstance(FileReference::class);
             $ref->setFile($file);
             $ref->setPid($pid);
 
-            // Diese 3 Zeilen sind entscheidend:
-            $ref->_setProperty('uidLocal', $file->getUid());
-            $ref->_setProperty('tablenames', 'tx_shopware6api_domain_model_product');
-            $ref->_setProperty('fieldname', 'cover_image');
-
             return $ref;
+
         } catch (\Throwable $e) {
             return null;
         } finally {
